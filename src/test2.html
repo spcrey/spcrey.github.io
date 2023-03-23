@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>threejs-test</title>
+    <meta charset="UTF-8" />
+    <script type="module" charset="UTF-8" src="../libs/three.js/Three.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+    <!--我们将把threejs渲染效果显示在这个div中-->
+    <div id="webgl-output"></div>
+    <script type="module">
+        import * as THREE from "../libs/build/three.module.js";
+        import { OrbitControls } from "../libs/three.js/jsm/controls/OrbitControls.js";
+        import { ImprovedNoise } from "../libs/three.js/jsm/math/ImprovedNoise.js";
+
+        // 场景
+        var scene = new THREE.Scene();
+
+        // 相机
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+        camera.position.set(140, 50, 140);
+        camera.lookAt(scene.position);
+
+        // 渲染器
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        document.getElementById("webgl-output").appendChild(renderer.domElement);
+
+        // 坐标轴
+        var axes = new THREE.AxesHelper(500);
+        scene.add(axes);
+
+        // 基本光源
+        const ambientLight = new THREE.AmbientLight(0xffffff);
+        scene.add(ambientLight);
+
+        // 聚光灯光源
+        var spotLight = new THREE.SpotLight(0xffffff, 0.5);
+        spotLight.position.set(800, 600, 0);
+        scene.add(spotLight);
+        var spotLightHelper = new THREE.SpotLightHelper(spotLight);
+        scene.add(spotLightHelper);
+
+        // 生成随机数
+        // 总的顶点数据量width * height
+        function funZ(width, height) {
+            var size = width * height;
+            var data = new Uint8Array(size);
+            var perlin = new ImprovedNoise();
+            // 控制地面显示效果，可以尝试0.01、0.1、1等值
+            // 0.1——凹凸不平的地面效果，1——山脉地形效果
+            var quality = 1;
+            // z值不同每次执行随机出来的地形效果不同
+            var z = Math.random() * 100;
+            for (var j = 0; j < 4; j++) {
+                for (var i = 0; i < size; i++) {
+                    // x的值0 1 2 3 4 5 6 ...
+                    var x = i % width;
+                    // ~表示按位取反，两个~就是按位取反后再取反
+                    // ~~相当于Math.floor()，效率高一点
+                    // y重复若干个值
+                    var y = ~~(i / width);
+                    // 通过噪声生成数据
+                    data[i] += Math.abs(perlin.noise(x / quality, y / quality, z) * quality * 1.75);
+                    console.log(y);
+                }
+                // 循环执行的时候，quality累乘，乘的系数是1，显示效果平面
+                quality *= 5;
+            }
+            return data;
+        }
+
+        // 地形块的上面
+        // width、height两个变量用控制平面几何体顶点数量
+        // 行列两个方向顶点数量不同，显示效果不同
+        var width = 250, height = 250;
+        // 生成地形顶点高度数据
+        var data = funZ(width, height);
+        //创建一个平面地形，行列两个方向顶点数据分别为width、height
+        var geometry = new THREE.PlaneBufferGeometry(450, 450, width - 1, height - 1);
+        geometry.rotateX(-Math.PI / 2);
+        // 访问几何体的顶点位置坐标数据
+        var vertices = geometry.attributes.position.array;
+        // 改变顶点高度值
+        for (var i = 0, j = 0, l = data.length; i < l; i++, j += 3) {
+            vertices[j + 1] = data[i] * 0.8;
+            var vertexID = j / 3.0;
+            var w = parseInt(vertexID / 250);
+            var h = vertexID % 250;
+            if (w == 0 || w == 249 || h == 0 || h == 249) {
+                vertices[j + 1] = -100;
+            }
+        }
+
+        var uvAttribute = geometry.getAttribute('uv');
+        var uvs = uvAttribute.array;  // 获取所有纹理坐标
+        for(var i = 0; i < uvs.length; i += 2){
+            var vertexID = i / 2;
+            var w = parseInt(vertexID / 250);
+            var h = vertexID % 250;
+            if (w == 0 || w == 249 || h == 0 || h == 249) {
+                uvs[i] = 0;
+                uvs[i + 1] = 0;
+            }
+        }
+        uvAttribute.needsUpdate = true;  // 告诉three.js需要更新这些属性
+
+        // 若不执行computeVertexNormals，就没有顶点法向量数据
+        geometry.computeVertexNormals();
+
+        var textureLoader = new THREE.TextureLoader();
+        var texture = textureLoader.load("textures/aerial_rocks_02_diff_8k.png");
+
+        var material = new THREE.MeshLambertMaterial({
+            // color: 0xCAA066,
+            side: THREE.DoubleSide,
+            map: texture,
+            // wireframe: true,
+        });
+        var mesh = new THREE.Mesh(geometry, material);
+        scene.add(mesh);
+
+        // 地形块的下面
+        var planeGeo = new THREE.PlaneGeometry(450, 450);
+        var planeMat = new THREE.MeshLambertMaterial({
+            color: 0xCAA066,
+            side: THREE.DoubleSide,
+        });
+        var plane = new THREE.Mesh(planeGeo, planeMat);
+        plane.rotation.x = -0.5 * Math.PI;
+        plane.position.y = -100;
+        scene.add(plane);
+
+        // 自适应
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        window.addEventListener('resize', onWindowResize, false);
+
+        // 轨道控制器
+        var controls = new OrbitControls(camera, renderer.domElement);
+        controls.update();
+
+        // 高效渲染
+        function renderScene() {
+            controls.update();
+
+            requestAnimationFrame(renderScene);
+            renderer.render(scene, camera);
+        }
+        renderScene();
+    </script>
+</body>
+
+</html>

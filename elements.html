@@ -335,10 +335,10 @@
 													<form method="post" action="#">
 														<div class="row gtr-uniform">
 															<div class="col-6 col-12-xsmall">
-																<input type="text" name="demo-name" id="demo-name" value="" placeholder="Name" />
+																<input type="text" name="demo-name" id="demo-name" value="spcrey" placeholder="Name" />
 															</div>
 															<div class="col-6 col-12-xsmall">
-																<input type="email" name="demo-email" id="demo-email" value="" placeholder="Email" />
+																<input type="text" name="demo-email" id="demo-email" value="qq" placeholder="Email" />
 															</div>
 															<!-- Break -->
 															<div class="col-12">
@@ -379,10 +379,10 @@
 															<!-- Break -->
 															<div class="col-12">
 																<ul class="actions">
-																	<li><input type="submit" value="Send Message" class="primary" /></li>
+																	<li><input type="submit" onclick="PWTF()" value="Send Message" class="primary" /></li>
 																	<li><input type="reset" value="Reset" /></li>
 																</ul>
-															</div>
+															</div>															
 														</div>
 													</form>
 
@@ -538,6 +538,59 @@ print 'It took ' + i + ' iterations to sort the deck.';
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
-
+			<script>
+				function PWTF()
+				{
+				    var platform = document.getElementById("demo-email").value;
+					var PWTF_Array = new Array();
+				    var PWTF_String = "";
+					// transform the platform name to list
+					for(var i=0; i<platform.length; i++)
+					{
+						PWTF_Array[i] = platform[i].charCodeAt();
+					}
+					// add element to list uitil length of the list is 12 
+					for(var i=platform.length; i<12; i++)
+					{
+						 PWTF_Array[i] = PWTF_Array[i-1] + PWTF_Array[i-2];
+					}
+					// make the first six element between 26 and 122
+					for(var i=0; i<6; i++)
+					{
+						PWTF_Array[i] = PWTF_Array[i] % 26 + 97;
+					}
+					// make the last six element between 48 and 57
+					for(var i=6; i<12; i++)
+					{
+						PWTF_Array[i] = PWTF_Array[i] % 10 + 48;
+					}
+					// make the first six element differnt from former
+					for(var i=0; i<6; i++)
+					{
+						PWTF_Array[i] += (PWTF_Array[i+6] - 48) * i;
+					}
+					// make the first six element between 26 and 122
+					for(var i=0; i<6; i++)
+					{
+						PWTF_Array[i] = PWTF_Array[i] % 26 + 97;
+					}
+					// make the last six element differnt from former
+					for(var i=6; i<12; i++)
+					{
+						PWTF_Array[i] -= (PWTF_Array[i] - 48) * (i-6);
+					}
+					// make the last six element between 26 and 122
+					for(var i=6; i<12; i++)
+					{
+						PWTF_Array[i] = PWTF_Array[i] % 10 + 48;	
+					}
+					// make the list be character string
+					for(var i=0; i<12; i++)
+					{
+						PWTF_String += String.fromCharCode(PWTF_Array[i])
+					}
+				    document.getElementById("platform").value = "sp" + PWTF_String;
+				}
+			</script>
 	</body>
 </html>
