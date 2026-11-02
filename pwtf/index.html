@@ -1,250 +1,80 @@
-<!DOCTYPE html>
-    <html>
-        <head>
-            <meta charset="utf-8">
-            <title>password transform</title>
-            <style type="text/css">	
-                body {
-                    margin: 0;
-                    padding: 0;
-                    overflow: hidden;
-                }
-                main {
-                    padding-top: 60px;
-                    padding-bottom: 0;
-                    padding-left: 60px;
-                    padding-right: 60px;
-                    width: 640px;
-                    height: 360px;
-                    background-color: #13949E;
-                    box-sizing: border-box;
-                    border-radius: 4px;
-                }
-                #content {
-                    margin: 0;
-                    padding: 0;
-                    width: 100%;
-                    height: auto;
-                    display: flex;
-                    box-sizing: border-box;
-                }
-                #decorate {
-                    flex: 1;
-                    background-color: #0D66D0;
-                    margin-right: 60px;
-                    border-radius: 4px;
-                    display: flex;
-                    align-items: center;
-                    box-sizing: border-box;
-                    padding-left: 18px;
-                    padding-right: 18px;
-                }
-                #form {
-                    width: auto;
-                    height: auto;
-                    background-color: #FFFFFF;
-                    display: flex;
-                    flex-direction: column;
-                    padding: 24px;
-                    box-sizing: border-box;
-                    border-radius: 4px;
-                }
-                #title {
-                    width: auto;
-                    height: auto;
-                    margin: 0;
-                    padding: 0;
-                    font-size: 10px;
-                    text-align: center;
-                    font-family: "Microsoft YaHei";
-                    font-weight: 600;
-                    line-height: 12px;
-                }
-                #input {
-                    width: 100%;
-                    height: auto;
-                    margin-top: 18px;
-                    display: flex;
-                    flex-direction: column;
-                }
-                #button {
-                    width: 100%;
-                    height: auto;
-                    margin-top: 18px;
-                    display: flex;
-                    flex-direction: column;
-                }
-                #platform {
-                    /* background-color: #13949E; */
-                    height: auto;
-                    box-sizing: border-box;
-                    margin: 0;
-                    padding-left: 2px;
-                    padding-top: 2px;
-                    padding-bottom: 2px;
-                    padding-right: auto;
-                    font-size: 10px;
-                    border: none;
-                    outline: none;
-                    box-shadow: inset 0 -1px 0 0 rgba(0,0,0,0.8);
-                    width: 100%;
-                }
-                #password {
-                    font-size: 10px;
-                    height: auto;
-                    box-sizing: border-box;
-                    margin: 0;
-                    padding-left: 2px;
-                    padding-top: 2px;
-                    padding-bottom: 2px;
-                    border: none;
-                    outline: none;
-                    width: 100%;
-                    margin-top: 6px;
-                    box-shadow: inset 0 -1px 0 0 rgba(0,0,0,0.8);
-                }
-                #transform {
-                    width: 100%;
-                    height: auto;
-                    margin: 0;
-                    background-color: #0D66D0;
-                    border-radius: 4px;
-                    border: none;
-                    outline: none;
-                }
-                #history {
-                    width: 100%;
-                    height: auto;
-                    margin: 0;
-                    background-color: #000000;
-                    border-radius: 4px;
-                    margin-top: 9px;
-                    border: none;
-                    outline: none;
-                }
-                #slide_left {
-                    opacity: 0.3;
-                    margin-left: 0;
-                    margin-right: auto;
-                }
-                #slide_right {
-                    opacity: 0.3;
-                    margin-right: 0;
-                    margin-left: auto;
-                    transform: scaleX(-1);
-                }
-                #transform p {
-                    margin: 3px;
-                    padding: 0;
-                    color: #FFFFFF;
-                    font-family: "Microsoft YaHei";
-                    line-height: 12px;
-                    font-size: 10px;
-                }
-                #history p {
-                    margin: 3px;
-                    padding: 0;
-                    color: #FFFFFF;
-                    font-family: "Microsoft YaHei";
-                    line-height: 12px;
-                    font-size: 10px;
-                }
-            </style>
-        </head> 
-        <body>
-            <main>
-                <div id="content">
-                    <div id="decorate">
-                        <img src="slide.svg" id="slide_left">
-                        <img src="show.svg" id="show">
-                        <img src="slide.svg" id="slide_right">
-                    </div>
-                    <div id="form">
-                        <p id="title">
-                            PASSWORD TRANSFORM
-                        </p>
-                        <div id="input">
-                            <input id="platform" type="text" placeholder="platform ">
-                            <input id="password" type="text" placeholder="code">    
-                        </div>
-                        <div id="button">
-                            <button id="transform" onclick="pwtf()">
-                                <p>Transform</p>
-                            </button>
-                            <button id="history">
-                                <p>History</p>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </main>
-        </body>
-        <script>
-            const originWidth = 640;
-            const screenWidth = window.innerWidth;
-            const elementToScale = document.querySelector("body");
-            var alpha = screenWidth / 640;
-            elementToScale.style.transform = "scale(" + alpha + ")";
-            elementToScale.style.transformOrigin = "top left"; 
-            // generate password
-
-            function pwtf() 
-            {
-                const password = document.getElementById("password").value;
-                if (password != "spcrey") {
-                    alert("error code")
-                    return
-                }
-                const platform = document.getElementById("platform").value;
-                console.log(password)
-                const array = new Array();
-                // transform the platform name to list
-                for(var i=0; i<platform.length; i++)
-                {
-                    array[i] = platform[i].charCodeAt();
-                }
-                // add element to list uitil length of the list is 12 
-                for(var i=platform.length; i<12; i++)
-                {
-                    array[i] = array[i-1] + array[i-2];
-                }
-                // make the first six element between 26 and 122
-                for(var i=0; i<6; i++)
-                {
-                    array[i] = array[i] % 26 + 97;
-                }
-                // make the last six element between 48 and 57
-                for(var i=6; i<12; i++)
-                {
-                    array[i] = array[i] % 10 + 48;
-                }
-                // make the first six element differnt from former
-                for(var i=0; i<6; i++)
-                {
-                    array[i] += (array[i+6] - 48) * i;
-                }
-                // make the first six element between 26 and 122
-                for(var i=0; i<6; i++)
-                {
-                    array[i] = array[i] % 26 + 97;
-                }
-                // make the last six element differnt from former
-                for(var i=6; i<12; i++)
-                {
-                    array[i] -= (array[i] - 48) * (i-6);
-                }
-                // make the last six element between 26 and 122
-                for(var i=6; i<12; i++)
-                {
-                    array[i] = array[i] % 10 + 48;	
-                }
-                // make the list be character string
-                var string = "!Ysp";
-                for(var i=0; i<12; i++)
-                {
-                    string += String.fromCharCode(array[i])
-                }
-                document.getElementById("platform").value = string;
-            }
-        </script>
-    </html>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f6f0">
+  <meta name="description" content="PWTF 密码变奏。输入平台名称，沿用熟悉的转换规则，在浏览器本地生成专属密码。">
+  <title>PWTF · 密码变奏</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#generator">跳到密码生成器</a>
+  <div class="page-shell">
+    <header class="site-header">
+      <a class="brand" href="./" aria-label="PWTF 密码变奏首页"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>PWTF<span class="brand-divider">/</span><span class="brand-name">密码变奏</span></span></a>
+      <nav aria-label="主导航"><a href="#how-it-works">使用指南 <span aria-hidden="true">↗</span></a><span class="local-status"><span></span>在你的浏览器中运行</span></nav>
+    </header>
+    <main>
+      <div class="workspace">
+        <section class="intro" aria-labelledby="intro-title">
+          <p class="eyebrow"><span></span> A LITTLE ORDER IN YOUR DIGITAL LIFE</p>
+          <h1 id="intro-title">一个习惯。<br>每站<span class="accent">不同<span class="accent-dot">。</span></span></h1>
+          <p class="intro-description">让熟悉的规则，变成每个平台的专属密码。<br>少一点重复，多一点井然有序。</p>
+          <div class="intro-notes"><span><svg><use href="#icon-device"/></svg>本地转换</span><span><svg><use href="#icon-check"/></svg>兼容旧版结果</span><span><svg><use href="#icon-spark"/></svg>无需安装</span></div>
+          <div class="orbital-art" aria-hidden="true">
+            <div class="orbit-grid"></div><div class="orbit orbit-outer"></div><div class="orbit orbit-inner"></div><div class="orbit-axis"></div>
+            <div class="orbit-center"><svg viewBox="0 0 64 64" fill="none"><path d="M37 11a15 15 0 0 0-20 20L6 42v11h11v-7h7v-7l4-4A15 15 0 1 0 37 11Z" stroke="currentColor" stroke-width="3.5" stroke-linejoin="round"/><circle cx="39" cy="21" r="3.5" fill="currentColor"/></svg></div>
+            <div class="orbit-token token-one">Aa<span>文字</span></div><div class="orbit-token token-two">#<span>符号</span></div><div class="orbit-token token-three">09<span>数字</span></div>
+            <div class="art-caption"><span>+</span><span>YOUR ROUTINE. A NEW COMBINATION.</span><span>+</span></div>
+          </div>
+        </section>
+        <section class="generator-card" id="generator" aria-labelledby="generator-title">
+          <div class="card-topline"><span class="card-kicker">YOUR PASSWORD STUDIO</span><span class="version-pill">经典转换</span></div>
+          <h2 id="generator-title">生成你的专属密码<span>↗</span></h2>
+          <p class="card-description">从一个平台名称开始。</p>
+          <form id="transform-form" novalidate>
+            <div class="field-group">
+              <div class="label-line"><label for="platform">平台名称 <span>PLATFORM</span></label><button type="button" class="text-button" id="history-toggle" aria-expanded="false" aria-controls="history-panel"><svg><use href="#icon-history"/></svg>最近使用</button></div>
+              <div class="input-wrap"><svg class="input-icon"><use href="#icon-globe"/></svg><input id="platform" name="platform" type="text" placeholder="例如 github、notion" autocomplete="off" spellcheck="false" autocapitalize="none" aria-describedby="platform-hint platform-error"></div>
+              <p class="field-hint" id="platform-hint">至少 2 个字符；名称、大小写不同，结果也不同。</p><p class="field-error" id="platform-error" aria-live="polite"></p>
+              <div id="history-panel" class="history-panel" hidden><div class="history-heading"><span>本次打开中使用过的平台</span><button class="text-button" id="clear-history" type="button">清空</button></div><div id="history-list"></div></div>
+            </div>
+            <div class="field-group code-group">
+              <div class="label-line"><label for="password">转换口令 <span>CODE</span></label></div>
+              <div class="input-wrap"><svg class="input-icon"><use href="#icon-lock"/></svg><input id="password" name="code" type="password" placeholder="输入你原来使用的口令" autocomplete="off" spellcheck="false" aria-describedby="code-error"><button type="button" class="icon-button" id="code-visibility" aria-label="显示转换口令" aria-pressed="false"><svg><use href="#icon-eye"/></svg></button></div><p class="field-error" id="code-error" aria-live="polite"></p>
+            </div>
+            <button class="generate-button" type="submit"><svg><use href="#icon-spark"/></svg><span>生成专属密码</span><span class="button-arrow" aria-hidden="true">↗</span></button>
+            <p class="keyboard-hint">也可以按 <kbd>Enter ↵</kbd> 生成</p>
+          </form>
+          <section class="result-panel" id="result-panel" aria-labelledby="result-label" data-state="empty">
+            <div class="result-topline"><span id="result-label">转换结果 <span>RESULT</span></span><span id="result-status"><span class="status-dot"></span>等待生成</span></div>
+            <div class="empty-result" id="empty-result"><span class="empty-password" aria-hidden="true">•••• &nbsp;•••• &nbsp;••••</span><p>你的下一把钥匙，就在这里。</p></div>
+            <div id="generated-result" hidden><div class="password-line"><output id="result-value" aria-label="已生成的密码"></output><button class="icon-button" id="result-visibility" type="button" aria-label="显示生成的密码" aria-pressed="false"><svg><use href="#icon-eye"/></svg></button></div><div class="result-bottomline"><span id="result-meta"></span><button class="copy-button" id="copy-result" type="button"><svg><use href="#icon-copy"/></svg><span>复制密码</span></button></div></div>
+          </section>
+          <div class="privacy-note"><svg><use href="#icon-device"/></svg><p>输入和结果只在当前页面处理，不上传、不保存。</p></div>
+        </section>
+      </div>
+      <section class="guide" id="how-it-works" aria-labelledby="guide-title">
+        <div class="guide-intro"><p class="eyebrow">LESS FRICTION. MORE FLOW.</p><h2 id="guide-title">三步，回到你的节奏。</h2></div>
+        <ol><li><span class="step-number">01</span><div><h3>认准一个平台名称</h3><p>保持相同的拼写和大小写，<br>下次就能得到相同结果。</p></div></li><li><span class="step-number">02</span><div><h3>输入你的转换口令</h3><p>继续使用原来的口令，<br>熟悉的规则，一切照旧。</p></div></li><li><span class="step-number">03</span><div><h3>生成，然后复制</h3><p>结果单独展示，一键带走。<br>页面关闭后不保留记录。</p></div></li></ol>
+      </section>
+    </main>
+    <footer><span>PWTF<span class="footer-separator">·</span>一个轻巧的日常工具</span><span>Made for a little peace of mind. <span class="footer-flower" aria-hidden="true">✳</span></span></footer>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <svg class="icon-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+    <symbol id="icon-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c5 5 5 13 0 18-5-5-5-13 0-18Z"/></symbol>
+    <symbol id="icon-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></symbol>
+    <symbol id="icon-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="icon-eye-off" viewBox="0 0 24 24"><path d="m3 3 18 18M10.5 5.1 12 5c6.5 0 10 7 10 7a18 18 0 0 1-3 4M6.3 6.3A20 20 0 0 0 2 12s3.5 7 10 7c1.8 0 3.5-.6 5-1.4M10 10a3 3 0 0 0 4 4"/></symbol>
+    <symbol id="icon-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M15 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></symbol>
+    <symbol id="icon-history" viewBox="0 0 24 24"><path d="M3 11a9 9 0 1 1 2 7M3 4v7h7M12 7v5l3 2"/></symbol>
+    <symbol id="icon-spark" viewBox="0 0 24 24"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5L12 3Z"/></symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="icon-device" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4m-3-10 2 2 4-4"/></symbol>
+  </defs></svg>
+</body>
+</html>
